@@ -13,6 +13,10 @@ services:
       DB_USER: app
       DB_PASS: app
       DB_NAME: app
+      JWT_ACCESS_SECRET: CHANGEME
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_SECRET: CHANGEME
+      JWT_REFRESH_TTL: 1d
     ports:
       - 3000:3000
     depends_on:

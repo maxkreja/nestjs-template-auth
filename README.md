@@ -23,6 +23,8 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+The app exposes a [Swagger](https://swagger.io/) frontend at `localhost:3000/swagger`.
+
 ### Docker
 
 ```bash

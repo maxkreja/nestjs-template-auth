@@ -1,26 +1,33 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as Joi from 'joi';
-import { ormconfig } from 'ormconfig';
+import { ormconfig } from '../ormconfig';
+import { AppConfigModule } from './app-config/app-config.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { configFactory, configSchema } from './config';
+import { TokensModule } from './tokens/tokens.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.number().port(),
-        DB_USER: Joi.string().required(),
-        DB_PASS: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        PORT: Joi.number().port(),
-      }),
+      load: [configFactory],
+      cache: true,
+      validationSchema: configSchema,
     }),
     TypeOrmModule.forRoot(ormconfig),
+    UsersModule,
+    TokensModule,
+    AuthenticationModule,
+    AppConfigModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+    AppService,
+  ],
 })
 export class AppModule {}
